@@ -10,13 +10,26 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="name" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="birth_date" type="DATE"/>
-            <column name="birth_place" type="VARCHAR(255)"/>
-            <column name="mother_maiden_name" type="VARCHAR(255)"/>
-            <column name="social_security_number" type="VARCHAR(255)"/>
-            <column name="tax_id" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(255)"/>
+            <column name="birth_place" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mother_maiden_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="social_security_number" type="VARCHAR(9)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_id" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
+
 </databaseChangeLog>
