@@ -1,15 +1,14 @@
 package com.dpd.person.model;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-//import javax.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "persons")
@@ -17,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Person {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,5 +45,11 @@ public class Person {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Address> addresses;
 
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<PhoneNumber> phoneNumbers;
 }
