@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function PersonForm() {
+function PersonForm({ selectedPerson, onUpdate, onDelete }) {
     const [person, setPerson] = useState({
+        id: null,
         name: '',
         birthDate: '',
         birthPlace: '',
@@ -12,6 +13,12 @@ function PersonForm() {
         addresses: [{ postalCode: '', city: '', street: '', houseNumber: '' }],
         phoneNumbers: [{ number: '' }]
     });
+
+    useEffect(() => {
+        if (selectedPerson) {
+            setPerson(selectedPerson);
+        }
+    }, [selectedPerson]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,7 +37,6 @@ function PersonForm() {
             addresses
         });
     };
-
     const handlePhoneNumberChange = (index, e) => {
         const { name, value } = e.target;
         const phoneNumbers = [...person.phoneNumbers];
@@ -40,30 +46,69 @@ function PersonForm() {
             phoneNumbers
         });
     };
+   /* const handlePhoneNumberChange = (index, e) => {
+        const { value } = e.target;
+        const phoneNumbers = [...person.phoneNumbers];
+        phoneNumbers[index].number = value;
+        setPerson({
+            ...person,
+            phoneNumbers
+        });
+    };*/
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (person.id) {
+            // Update existing person
+            fetch(`http://localhost:8082/api/persons/${person.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(person),
+                credentials: 'include'
+            }).then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        console.error('Error:', error);
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    });
+                }
+                return response.json();
+            }).then(data => {
+                console.log('Success:', data);
+                onUpdate(data);
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        } else {
+            // Create new person
+            fetch('http://localhost:8082/api/persons', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(person),
+                credentials: 'include'
+            }).then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        console.error('Error:', error);
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    });
+                }
+                return response.json();
+            }).then(data => {
+                console.log('Success:', data);
+                onUpdate(data);
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    };
 
-        fetch('http://localhost:8082/api/persons', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(person),
-            credentials: 'include'
-        }).then(response => {
-            if (!response.ok) {
-                return response.json().then(error => {
-                    console.error('Error:', error);
-                    throw new Error('Network response was not ok ' + response.statusText);
-                });
-            }
-            return response.json();
-        }).then(data => {
-            console.log('Success:', data);
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
+    const handleDelete = () => {
+        onDelete(person.id);
     };
 
     const addAddress = () => {
@@ -110,6 +155,7 @@ function PersonForm() {
             <button type="button" onClick={addPhoneNumber}>Add Phone Number</button>
 
             <button type="submit">Submit</button>
+            {person.id && <button type="button" onClick={handleDelete}>Delete</button>}
         </form>
     );
 }

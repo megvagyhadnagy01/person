@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PersonTable from './PersonTable';
 
-function PersonList() {
+function PersonList({ onSelect, onDelete }) {
     const [persons, setPersons] = useState([]);
 
     useEffect(() => {
@@ -14,7 +14,7 @@ function PersonList() {
     return (
         <div>
             <h2>Person List</h2>
-            <PersonTable persons={persons} />
+            <PersonTable persons={persons} onSelect={onSelect} onDelete={onDelete} />
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PersonTable({ persons }) {
+function PersonTable({ persons, onSelect, onDelete }) {
     return (
         <table>
             <thead>
@@ -14,6 +14,7 @@ function PersonTable({ persons }) {
                 <th>Email</th>
                 <th>Addresses</th>
                 <th>Phone Numbers</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -29,16 +30,21 @@ function PersonTable({ persons }) {
                     <td>
                         <ul>
                             {person.addresses.map((address, index) => (
-                                <li key={index}>{address.zip}, {address.city}, {address.street}, {address.houseNumber}</li>
+                                <li key={index}>{address.postalCode}, {address.city}, {address.street}, {address.houseNumber}</li>
                             ))}
                         </ul>
                     </td>
                     <td>
                         <ul>
                             {person.phoneNumbers.map((phoneNumber, index) => (
+                                /*    <li key={index}>{phoneNumber.number}</li> */
                                 <li key={index}>{phoneNumber}</li>
                             ))}
                         </ul>
+                    </td>
+                    <td>
+                        <button onClick={() => onSelect(person)}>Edit</button>
+                        <button onClick={() => onDelete(person.id)}>Delete</button>
                     </td>
                 </tr>
             ))}
