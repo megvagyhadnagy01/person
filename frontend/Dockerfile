@@ -1,5 +1,3 @@
-FROM ubuntu:latest
-LABEL authors="megvagyhadnagy01"
 # Base image
 FROM node:14
 
@@ -21,5 +19,3 @@ EXPOSE 3000
 
 # Start the app
 CMD ["npm", "start"]
-
-ENTRYPOINT ["top", "-b"]
