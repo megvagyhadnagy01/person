@@ -5,7 +5,7 @@ function PersonList() {
     const [persons, setPersons] = useState([]);
 
     useEffect(() => {
-        fetch('/api/persons')
+        fetch('http://localhost:8082/api/persons')
             .then(response => response.json())
             .then(data => setPersons(data))
             .catch(error => console.error('Error:', error));

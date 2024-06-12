@@ -9,8 +9,8 @@ function PersonForm() {
         socialSecurityNumber: '',
         taxId: '',
         email: '',
-        addresses: [{ zip: '', city: '', street: '', houseNumber: '' }],
-        phoneNumbers: ['']
+        addresses: [{ postalCode: '', city: '', street: '', houseNumber: '' }],
+        phoneNumbers: [{ number: '' }]
     });
 
     const handleChange = (e) => {
@@ -32,9 +32,9 @@ function PersonForm() {
     };
 
     const handlePhoneNumberChange = (index, e) => {
-        const { value } = e.target;
+        const { name, value } = e.target;
         const phoneNumbers = [...person.phoneNumbers];
-        phoneNumbers[index] = value;
+        phoneNumbers[index][name] = value;
         setPerson({
             ...person,
             phoneNumbers
@@ -43,14 +43,23 @@ function PersonForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Send person data to the backend API
-        fetch('/api/persons', {
+
+        fetch('http://localhost:8082/api/persons', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(person)
-        }).then(response => response.json()).then(data => {
+            body: JSON.stringify(person),
+            credentials: 'include'
+        }).then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    console.error('Error:', error);
+                    throw new Error('Network response was not ok ' + response.statusText);
+                });
+            }
+            return response.json();
+        }).then(data => {
             console.log('Success:', data);
         }).catch((error) => {
             console.error('Error:', error);
@@ -60,14 +69,14 @@ function PersonForm() {
     const addAddress = () => {
         setPerson({
             ...person,
-            addresses: [...person.addresses, { zip: '', city: '', street: '', houseNumber: '' }]
+            addresses: [...person.addresses, { postalCode: '', city: '', street: '', houseNumber: '' }]
         });
     };
 
     const addPhoneNumber = () => {
         setPerson({
             ...person,
-            phoneNumbers: [...person.phoneNumbers, '']
+            phoneNumbers: [...person.phoneNumbers, { number: '' }]
         });
     };
 
@@ -84,7 +93,7 @@ function PersonForm() {
             <h4>Addresses</h4>
             {person.addresses.map((address, index) => (
                 <div key={index}>
-                    <input name="zip" value={address.zip} onChange={(e) => handleAddressChange(index, e)} placeholder="ZIP" required />
+                    <input name="postalCode" value={address.postalCode} onChange={(e) => handleAddressChange(index, e)} placeholder="Postal Code" required />
                     <input name="city" value={address.city} onChange={(e) => handleAddressChange(index, e)} placeholder="City" required />
                     <input name="street" value={address.street} onChange={(e) => handleAddressChange(index, e)} placeholder="Street" required />
                     <input name="houseNumber" value={address.houseNumber} onChange={(e) => handleAddressChange(index, e)} placeholder="House Number" required />
@@ -95,7 +104,7 @@ function PersonForm() {
             <h4>Phone Numbers</h4>
             {person.phoneNumbers.map((phoneNumber, index) => (
                 <div key={index}>
-                    <input name="phoneNumber" value={phoneNumber} onChange={(e) => handlePhoneNumberChange(index, e)} placeholder="Phone Number" required />
+                    <input name="number" value={phoneNumber.number} onChange={(e) => handlePhoneNumberChange(index, e)} placeholder="Phone Number" required />
                 </div>
             ))}
             <button type="button" onClick={addPhoneNumber}>Add Phone Number</button>
