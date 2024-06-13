@@ -11,12 +11,16 @@ function PersonForm({ selectedPerson, onUpdate, onDelete }) {
         taxId: '',
         email: '',
         addresses: [{ postalCode: '', city: '', street: '', houseNumber: '' }],
-        phoneNumbers: [{ number: '' }]
+        phoneNumbers: [''] // phoneNumbers as array of strings
     });
 
     useEffect(() => {
         if (selectedPerson) {
-            setPerson(selectedPerson);
+            // Deep copy to avoid state mutation issues
+            setPerson({
+                ...selectedPerson,
+                phoneNumbers: selectedPerson.phoneNumbers.map(p => p.number) // Map phone numbers to string values
+            });
         }
     }, [selectedPerson]);
 
@@ -37,78 +41,74 @@ function PersonForm({ selectedPerson, onUpdate, onDelete }) {
             addresses
         });
     };
+
     const handlePhoneNumberChange = (index, e) => {
-        const { name, value } = e.target;
+        const { value } = e.target;
         const phoneNumbers = [...person.phoneNumbers];
-        phoneNumbers[index][name] = value;
+        phoneNumbers[index] = value; // Store value as string
         setPerson({
             ...person,
             phoneNumbers
         });
     };
-   /* const handlePhoneNumberChange = (index, e) => {
-        const { value } = e.target;
-        const phoneNumbers = [...person.phoneNumbers];
-        phoneNumbers[index].number = value;
-        setPerson({
-            ...person,
-            phoneNumbers
-        });
-    };*/
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (person.id) {
-            // Update existing person
-            fetch(`http://localhost:8082/api/persons/${person.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(person),
-                credentials: 'include'
-            }).then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => {
-                        console.error('Error:', error);
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    });
-                }
-                return response.json();
-            }).then(data => {
-                console.log('Success:', data);
-                onUpdate(data);
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
-        } else {
-            // Create new person
-            fetch('http://localhost:8082/api/persons', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(person),
-                credentials: 'include'
-            }).then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => {
-                        console.error('Error:', error);
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    });
-                }
-                return response.json();
-            }).then(data => {
-                console.log('Success:', data);
-                onUpdate(data);
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+
+        const personToSend = {
+            ...person,
+            phoneNumbers: person.phoneNumbers.map(number => ({ number })), // Convert back to object format for backend
+            addresses: person.addresses.map(address => ({
+                postalCode: address.postalCode,
+                city: address.city,
+                street: address.street,
+                houseNumber: address.houseNumber
+            }))
+        };
+
+        const url = person.id
+            ? `http://localhost:8082/api/persons/${person.id}`
+            : 'http://localhost:8082/api/persons';
+        const method = person.id ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(personToSend),
+            credentials: 'include'
+        }).then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    console.error('Error:', error);
+                    throw new Error('Network response was not ok ' + response.statusText);
+                });
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Success:', data);
+            onUpdate(data);
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
     };
 
     const handleDelete = () => {
-        onDelete(person.id);
+        fetch(`http://localhost:8082/api/persons/${person.id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        }).then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    console.error('Error:', error);
+                    throw new Error('Network response was not ok ' + response.statusText);
+                });
+            }
+            onDelete(person.id);
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
     };
 
     const addAddress = () => {
@@ -121,7 +121,7 @@ function PersonForm({ selectedPerson, onUpdate, onDelete }) {
     const addPhoneNumber = () => {
         setPerson({
             ...person,
-            phoneNumbers: [...person.phoneNumbers, { number: '' }]
+            phoneNumbers: [...person.phoneNumbers, ''] // Add as string
         });
     };
 
@@ -149,7 +149,7 @@ function PersonForm({ selectedPerson, onUpdate, onDelete }) {
             <h4>Phone Numbers</h4>
             {person.phoneNumbers.map((phoneNumber, index) => (
                 <div key={index}>
-                    <input name="number" value={phoneNumber.number} onChange={(e) => handlePhoneNumberChange(index, e)} placeholder="Phone Number" required />
+                    <input name="number" value={phoneNumber} onChange={(e) => handlePhoneNumberChange(index, e)} placeholder="Phone Number" required />
                 </div>
             ))}
             <button type="button" onClick={addPhoneNumber}>Add Phone Number</button>
