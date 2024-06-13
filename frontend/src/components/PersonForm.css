@@ -1,0 +1,36 @@
+.person-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+    margin: 0 auto;
+}
+
+.person-form input,
+.person-form button {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.person-form h4 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.person-form div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.person-form button {
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.person-form button:hover {
+    background-color: #45a049;
+}

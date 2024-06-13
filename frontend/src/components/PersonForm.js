@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './PersonForm.css';
 
 function PersonForm({ selectedPerson, onUpdate, onDelete }) {
     const [person, setPerson] = useState({
@@ -19,7 +20,8 @@ function PersonForm({ selectedPerson, onUpdate, onDelete }) {
             // Deep copy to avoid state mutation issues
             setPerson({
                 ...selectedPerson,
-                phoneNumbers: selectedPerson.phoneNumbers.map(p => p.number) // Map phone numbers to string values
+                phoneNumbers: selectedPerson.phoneNumbers.map(p => p.number), // Map phone numbers to string values
+                birthDate: selectedPerson.birthDate ? new Date(selectedPerson.birthDate).toISOString().split('T')[0] : ''
             });
         }
     }, [selectedPerson]);

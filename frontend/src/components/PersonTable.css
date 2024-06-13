@@ -1,0 +1,31 @@
+.person-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.person-table th,
+.person-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.person-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.person-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.person-table tr:hover {
+    background-color: #ddd;
+}
+
+.person-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #4CAF50;
+    color: white;
+}

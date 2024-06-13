@@ -1,8 +1,9 @@
 import React from 'react';
+import './PersonTable.css';
 
 function PersonTable({ persons, onSelect, onDelete }) {
     return (
-        <table>
+        <table className="person-table">
             <thead>
             <tr>
                 <th>Name</th>
@@ -37,7 +38,7 @@ function PersonTable({ persons, onSelect, onDelete }) {
                     <td>
                         <ul>
                             {person.phoneNumbers.map((phoneNumber, index) => (
-                                <li key={index}>{phoneNumber.number}</li>
+                                <li key={index}>{phoneNumber}</li>
                             ))}
                         </ul>
                     </td>
