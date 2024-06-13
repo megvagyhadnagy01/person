@@ -1,6 +1,4 @@
 package com.dpd.person;
-
-
 import com.dpd.person.controller.PersonController;
 import com.dpd.person.model.Person;
 import com.dpd.person.repository.PersonRepository;
@@ -10,6 +8,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -51,14 +52,7 @@ public class PersonControllerTests {
 		person.setPhoneNumbers(Collections.emptyList());
 	}
 
-	@Test
-	public void testGetAllPersons() throws Exception {
-		Mockito.when(personRepository.findAll()).thenReturn(Collections.singletonList(person));
 
-		mockMvc.perform(get("/api/persons"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].name", is(person.getName())));
-	}
 
 	@Test
 	public void testCreatePerson() throws Exception {

@@ -1,0 +1,29 @@
+
+### Frontend README
+
+```markdown
+# Person Management Frontend
+
+## Overview
+
+This is the frontend application for the Person Management system. It is built using React and communicates with the backend service to manage person records.
+
+## Technologies Used
+
+- React
+- JavaScript
+- CSS
+- Docker
+
+## Prerequisites
+
+- Node.js (version 14 or higher)
+- Docker and Docker Compose
+
+## Setup
+
+### 1. Clone the Repository
+
+```sh
+git clone <repository-url>
+cd <repository-directory>/frontend

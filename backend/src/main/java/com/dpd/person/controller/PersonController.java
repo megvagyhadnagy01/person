@@ -4,6 +4,9 @@ import com.dpd.person.exception.ResourceNotFoundException;
 import com.dpd.person.model.Person;
 import com.dpd.person.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,15 +28,16 @@ public class PersonController {
     private PersonRepository personRepository;
 
     @GetMapping
-    public List<Person> getAllPersons() {
-        return personRepository.findAll();
+    public Page<Person> getAllPersons(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return personRepository.findAll(pageable);
     }
 
     @PostMapping
     public ResponseEntity<Person> createPerson(@Valid @RequestBody Person person) {
         logger.info("Received request to create person: {}", person);
 
-        // Beállítjuk a person mezőt az address és phoneNumber entitásokban
         person.getAddresses().forEach(address -> address.setPerson(person));
         person.getPhoneNumbers().forEach(phoneNumber -> phoneNumber.setPerson(person));
 
@@ -61,7 +64,6 @@ public class PersonController {
             person.setTaxId(personDetails.getTaxId());
             person.setEmail(personDetails.getEmail());
 
-            // Frissítjük a címeket és telefonszámokat
             person.getAddresses().clear();
             person.getAddresses().addAll(personDetails.getAddresses());
             person.getAddresses().forEach(address -> address.setPerson(person));

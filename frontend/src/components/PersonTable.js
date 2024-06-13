@@ -37,8 +37,7 @@ function PersonTable({ persons, onSelect, onDelete }) {
                     <td>
                         <ul>
                             {person.phoneNumbers.map((phoneNumber, index) => (
-                                    <li key={index}>{phoneNumber}</li>
-                               /* <li key={index}>{phoneNumber}</li> */
+                                <li key={index}>{phoneNumber.number}</li>
                             ))}
                         </ul>
                     </td>
